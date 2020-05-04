@@ -4296,7 +4296,6 @@ var render = function() {
           "button",
           {
             staticClass: "btn btn-primary",
-            attrs: { type: "submit" },
             on: {
               click: function($event) {
                 $event.preventDefault()
@@ -20754,7 +20753,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var main = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
+new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
   router: _router_index__WEBPACK_IMPORTED_MODULE_2__["default"],
   store: _store_index__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -20806,10 +20805,12 @@ _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].beforeEach(function (to, f
           nprogress__WEBPACK_IMPORTED_MODULE_2___default.a.done();
         })["catch"](function (err) {
           console.log(err);
-          nprogress__WEBPACK_IMPORTED_MODULE_2___default.a.done(); // store.dispatch('FedLogOut').then(() => {
-          //     // Todo show the message alert
-          //     next({path: '/'})
-          // })
+          nprogress__WEBPACK_IMPORTED_MODULE_2___default.a.done();
+          _store_index__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch('logout').then(function () {
+            next({
+              path: '/login'
+            });
+          });
         });
       } else {
         next();
@@ -20833,13 +20834,12 @@ _router_index__WEBPACK_IMPORTED_MODULE_0__["default"].beforeEach(function (to, f
 /*!**************************************!*\
   !*** ./resources/js/router/index.js ***!
   \**************************************/
-/*! exports provided: constantRouterMap, default, asyncRouterMap */
+/*! exports provided: routes, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "constantRouterMap", function() { return constantRouterMap; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "asyncRouterMap", function() { return asyncRouterMap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "routes", function() { return routes; });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
@@ -20850,7 +20850,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
-var constantRouterMap = [{
+var routes = [{
   path: '/users',
   component: _components_Layout__WEBPACK_IMPORTED_MODULE_2__["default"],
   children: [{
@@ -20864,26 +20864,16 @@ var constantRouterMap = [{
   path: '/login',
   component: _views_Login__WEBPACK_IMPORTED_MODULE_3__["default"],
   name: 'login'
+}, {
+  path: '*',
+  component: _views_Login__WEBPACK_IMPORTED_MODULE_3__["default"]
 }];
 /* harmony default export */ __webpack_exports__["default"] = (new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   mode: 'history',
   // require service support
   base: '/',
-  routes: constantRouterMap
+  routes: routes
 }));
-var asyncRouterMap = [
-/** When your routing table is too long, you can split it into small modules**/
-{
-  path: '/hello',
-  component: _components_Layout__WEBPACK_IMPORTED_MODULE_2__["default"],
-  children: [{
-    path: '',
-    component: function component() {
-      return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.bind(null, /*! ../views/users/Index */ "./resources/js/views/users/Index.vue"));
-    },
-    name: 'TopPage'
-  }]
-}];
 
 /***/ }),
 
@@ -20932,6 +20922,11 @@ var user = {
     user: null,
     count: 0
   },
+  getters: {
+    token: function token(state) {
+      return state.token;
+    }
+  },
   mutations: {
     SET_TOKEN: function SET_TOKEN(state, token) {
       state.token = token;
@@ -20960,8 +20955,6 @@ var user = {
       var commit = _ref2.commit;
       return new Promise(function (resolve, reject) {
         Object(_api_user_api__WEBPACK_IMPORTED_MODULE_0__["getUserInfo"])(userInfo).then(function (response) {
-          console.log('haha');
-          console.log(response);
           commit('SET_USER', response);
           commit('SET_COUNT');
           resolve();
@@ -21028,39 +21021,35 @@ function removeToken() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./auth */ "./resources/js/utils/auth.js");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../store */ "./resources/js/store/index.js");
+
+
 
 var service = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
   baseURL: '/api/',
-  timeout: 30000 * 4 // request timeout
+  timeout: 30000 * 4
+});
+service.interceptors.request.use(function (config) {
+  if (_store__WEBPACK_IMPORTED_MODULE_2__["default"].getters.token) {
+    config.headers['Authorization'] = 'Bearer ' + Object(_auth__WEBPACK_IMPORTED_MODULE_1__["getToken"])();
+  }
 
-}); // request interceptor
-// service.interceptors.request.use(
-//     config => {
-//         // Do something before request is sent
-//         // if (store.getters.token) {
-//         //     config.headers['Authorization'] = 'Bearer ' + getToken()
-//         // }
-//         return config
-//     },
-//     error => {
-//         // Do something with request error
-//         console.log(error) // for debug
-//         Promise.reject(error)
-//     }
-// )
+  return config;
+}, function (error) {
+  console.log(error); // for debug
 
+  Promise.reject(error);
+});
 service.interceptors.response.use(function (response) {
   return response.data;
 }, function (error) {
-  // if (error.response.status === 403) {
-  //     store.commit('SET_ROLES', [])
-  // } else if (error.response.status === 401) {
-  //     store.commit('SET_TOKEN', '')
-  //     store.commit('SET_ROLES', [])
-  //     removeToken()
-  // } else if (error.response.data && typeof error.response.data.errors === 'string') {
-  //     store.commit('SET_ERROR_MESSAGE', error.response.data.errors)
-  // }
+  if (error.response.status === 401) {
+    _store__WEBPACK_IMPORTED_MODULE_2__["default"].commit('SET_TOKEN', null);
+    _store__WEBPACK_IMPORTED_MODULE_2__["default"].commit('SET_USER', null);
+    Object(_auth__WEBPACK_IMPORTED_MODULE_1__["removeToken"])();
+  }
+
   return Promise.reject(error.response.data);
 });
 /* harmony default export */ __webpack_exports__["default"] = (service);
@@ -21172,8 +21161,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\laragon\www\demo-api\resources\js\main.js */"./resources/js/main.js");
-module.exports = __webpack_require__(/*! C:\laragon\www\demo-api\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /var/www/html/laravel-vuejs/resources/js/main.js */"./resources/js/main.js");
+module.exports = __webpack_require__(/*! /var/www/html/laravel-vuejs/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

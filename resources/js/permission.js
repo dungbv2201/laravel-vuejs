@@ -23,10 +23,9 @@ router.beforeEach((to, from, next) => {
                 }).catch((err) => {
                     console.log(err)
                     NProgress.done()
-                    // store.dispatch('FedLogOut').then(() => {
-                    //     // Todo show the message alert
-                    //     next({path: '/'})
-                    // })
+                    store.dispatch('logout').then(() => {
+                        next({path: '/login'})
+                    })
                 })
             } else {
                 next()

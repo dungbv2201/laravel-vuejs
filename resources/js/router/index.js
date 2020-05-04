@@ -5,7 +5,7 @@ import Login from "../views/Login";
 
 Vue.use(Router)
 
-export const constantRouterMap = [
+export const routes = [
     {
         path: '/users',
         component: Layout,
@@ -21,25 +21,14 @@ export const constantRouterMap = [
         path: '/login',
         component: Login,
         name: 'login'
+    },
+    {
+        path: '*',
+        component: Login,
     }
 ]
 export default new Router({
     mode: 'history', // require service support
     base: '/',
-    routes: constantRouterMap
+    routes: routes
 })
-export const asyncRouterMap = [
-    /** When your routing table is too long, you can split it into small modules**/
-    {
-        path: '/hello',
-        component: Layout,
-        children:
-            [
-                {
-                    path: '',
-                    component: () => import('../views/users/Index'),
-                    name: 'TopPage',
-                }
-            ]
-    },
-]

@@ -20,7 +20,7 @@
                            id="password">
                     <small class="form-text text-danger" v-if="errors && errors.password">{{errors.password[0]}}</small>
                 </div>
-                <button type="submit" class="btn btn-primary" @click.prevent="login">Submit</button>
+                <button class="btn btn-primary" @click.prevent="login">Submit</button>
             </form>
         </div>
     </div>

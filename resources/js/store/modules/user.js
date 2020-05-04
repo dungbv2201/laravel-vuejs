@@ -7,6 +7,11 @@ const user = {
         user: null,
         count: 0
     },
+    getters: {
+        token(state){
+            return state.token
+        }
+    },
     mutations: {
         SET_TOKEN: (state, token) => {
             state.token = token
@@ -33,8 +38,6 @@ const user = {
         getUserInfo({commit}, userInfo) {
             return new Promise((resolve, reject) => {
                 getUserInfo(userInfo).then(response => {
-                    console.log('haha')
-                    console.log(response)
                     commit('SET_USER', response)
                     commit('SET_COUNT')
                     resolve()

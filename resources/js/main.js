@@ -3,7 +3,7 @@ import App from "./App";
 import router from "./router/index";
 import store from './store/index'
 import './permission'
-const main = new Vue({
+new Vue({
     el: '#app',
     router,
     store,
