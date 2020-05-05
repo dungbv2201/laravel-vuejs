@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-3 card login">
             <h3 class="text-success text-center mb-4">Login In</h3>
-            <div class="form-text text-danger mb-3" v-if="isInvalid">{{ isInvalid }}</div>
+            <div class="form-text text-danger mb-3" v-if="errors && errors.msg">{{ errors.msg[0] }}</div>
             <form>
                 <div class="form-group">
                     <label for="email">Email address</label>
@@ -46,26 +46,13 @@
             login() {
                 this.$store.dispatch('login', this.credentials)
                     .then(response => {
-                        this.resetError()
-                        this.isInvalid = ''
+                        this.errors = {}
                         this.$router.push({name: 'user-list'})
                     })
                     .catch(error => {
-                        this.setError(error)
+                        this.errors = error.errors
                     })
             },
-            resetError() {
-                this.errors = {}
-            },
-            setError(res) {
-                if (res.invalidEmailOrPassword) {
-                    this.resetError()
-                    this.isInvalid = res.msg
-                } else {
-                    this.isInvalid = ''
-                    this.errors = res.errors
-                }
-            }
         }
     }
 </script>

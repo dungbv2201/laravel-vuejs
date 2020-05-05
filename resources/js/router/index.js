@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from "../components/Layout";
 import Login from "../views/Login";
+import Haha from "../views/Haha";
 
 Vue.use(Router)
 
@@ -21,6 +22,11 @@ export const routes = [
         path: '/login',
         component: Login,
         name: 'login'
+    },
+    {
+        path: '/haha',
+        component: Haha,
+        name: 'haha'
     },
     {
         path: '*',

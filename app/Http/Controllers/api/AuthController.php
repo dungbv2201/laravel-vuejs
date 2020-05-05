@@ -18,12 +18,6 @@ class AuthController extends Controller
     {
         $credentials = $request->only(['password', 'email']);
         $response = UserFacade::login($credentials);
-        if ($response['statusCode'] === Response::HTTP_UNPROCESSABLE_ENTITY) {
-            return response()->json(
-                ['invalidEmailOrPassword' => true, 'msg' => $response['msg']],
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
         return response()->json(['token' => $response['token']]);
     }
 
@@ -46,7 +40,7 @@ class AuthController extends Controller
         return response()->json($users);
     }
 
-    public function getUserInfo()
+    public function getUserInfo(): \Illuminate\Http\JsonResponse
     {
         $user = User::query()->find(Auth::id());
         return response()->json($user);
@@ -68,8 +62,7 @@ class AuthController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         }
-        return response()->json(
-            ['msg' => $response['msg']]
+        return response()->json(['msg' => $response['msg']]
         );
     }
 }

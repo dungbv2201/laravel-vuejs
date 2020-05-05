@@ -29,6 +29,7 @@ const user = {
                 loginApi(userInfo).then(response => {
                     commit('SET_TOKEN', response.token)
                     setToken(response.token)
+                    console.log(response.token)
                     resolve()
                 }).catch(error => {
                     reject(error)

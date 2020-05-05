@@ -24,7 +24,3 @@ Route::middleware('auth:sanctum')->group(
         Route::delete('/users/store', [\App\Http\Controllers\api\AuthController::class, 'register']);
     }
 );
-
-//Route::middleware('auth:api')->group(function () {
-//    Route::get('/info', [\App\Http\Controllers\api\AuthController::class, 'getUserInfo']);
-//});

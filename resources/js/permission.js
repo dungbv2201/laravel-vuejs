@@ -37,7 +37,10 @@ router.beforeEach((to, from, next) => {
             next()
             NProgress.done()
         } else {
-            next(`/login?redirect=${to.path}`)
+            next({
+                path: 'login',
+                query: {redirect: to.fullPath}
+            })
             NProgress.done()
         }
     }
