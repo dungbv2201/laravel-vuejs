@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Facades\UserFacade;
+use App\Facades\UserFacade as UserService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -17,14 +17,14 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->only(['password', 'email']);
-        $response = UserFacade::login($credentials);
+        $response = UserService::login($credentials);
         return response()->json(['token' => $response['token']]);
     }
 
     public function register(RegisterRequest $request)
     {
         $data = $request->only(['name','email','password']);
-        $response = UserFacade::register($data);
+        $response = UserService::register($data);
         if ($response['statusCode'] === Response::HTTP_INTERNAL_SERVER_ERROR) {
             return response()->json(
                 ['msg' => $response['msg']],
@@ -36,7 +36,7 @@ class AuthController extends Controller
 
     public function index()
     {
-        $users = UserFacade::getListUser();
+        $users = UserService::getListUser();
         return response()->json($users);
     }
 
@@ -55,7 +55,7 @@ class AuthController extends Controller
 
     public function destroy(Request $request)
     {
-        $response = UserFacade::deleteUser($request->id);
+        $response = UserService::deleteUser($request->id);
         if ($response['statusCode'] === Response::HTTP_BAD_REQUEST) {
             return response()->json(
                 ['msg' => $response['msg']],
